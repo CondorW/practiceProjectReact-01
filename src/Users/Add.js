@@ -29,7 +29,9 @@ export default function Add(props) {
         name: usernameState,
         age: parseInt(ageState),
       };
-      props.onDataSubmit(userObj);  
+      props.onDataSubmit(userObj);
+      setUsernameState('');
+      setAgeState('');
     }
 
   };
@@ -44,6 +46,7 @@ export default function Add(props) {
             className="block py-1 my-2 rounded"
             id="usernameInput"
             type="text"
+            value={usernameState}
           />
         </div>
         <div>
@@ -53,6 +56,7 @@ export default function Add(props) {
             className="block py-1 my-2 rounded"
             id="ageInput"
             type="number"
+            value={ageState}
           />
         </div>
         <button className="block border-2 p-2">Add new User</button>

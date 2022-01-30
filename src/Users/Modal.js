@@ -34,8 +34,16 @@ export default function Modal(props) {
     );
   };
 
-  return <Fragment>
-      {reactDom.createPortal(<Backrop onClick={invalidStateHandler}/>,document.getElementById('backdrop-root'))}
-      {reactDom.createPortal(<ErrorModal onClick={invalidStateHandler}></ErrorModal>,document.getElementById('overlay-root'))}
-  </Fragment>;
+  return (
+    <Fragment>
+      {reactDom.createPortal(
+        <Backrop />,
+        document.getElementById("backdrop-root")
+      )}
+      {reactDom.createPortal(
+        <ErrorModal></ErrorModal>,
+        document.getElementById("overlay-root")
+      )}
+    </Fragment>
+  );
 }
