@@ -1,4 +1,13 @@
-import { useRef, useState } from "react";
+import { useReducer, useRef, useState } from "react";
+
+const inputReducer = (state, action) => {
+  if (action.type === "USERNAME_INPUT") {
+    return { username: action.usrV, age:state.ageV  };
+  } else if (action.type === "AGE_INPUT") {
+    return { username: state.usrV, age: action.ageV };
+  }
+  return { username: '', age: 0 };
+};
 
 export default function Add(props) {
   const { onInvalidState } = props;
@@ -6,33 +15,39 @@ export default function Add(props) {
   const nameInputRef = useRef();
   const ageInputRef = useRef();
 
-  const [usernameState, setUsernameState] = useState("");
-  const [ageState, setAgeState] = useState("");
+  // const [usernameState, setUsernameState] = useState("");
+  // const [ageState, setAgeState] = useState("");
 
-  const usernameChangeHandler = (event) => {
-    setUsernameState(event.target.value);
+  const [inputState, dispatchInput] = useReducer(inputReducer, {
+    username: 'HelloThere',
+    age: 0,
+  });
+  console.log(ageInputRef.current.value);
+
+  const usernameChangeHandler = () => {
+    dispatchInput({ type: "USERNAME_INPUT", usrV: nameInputRef.current.value });
   };
-  const ageChangeHandler = (event) => {
-    setAgeState(event.target.value);
+  const ageChangeHandler = () => {
+    dispatchInput({ type: "AGE_INPUT", ageV: ageInputRef.current.value });
   };
+
 
   const submitHandler = (event) => {
     event.preventDefault();
-    console.log(nameInputRef.current.value);
-    if (ageState <= 0) {
+    if (inputState.age <= 0) {
       onInvalidState(1);
       return;
-    } else if (usernameState.trim().length < 3) {
+    } else if (inputState.username.trim().length < 3) {
       onInvalidState(2);
     } else {
       const userObj = {
         id: Math.random() * 10,
-        name: usernameState,
-        age: parseInt(ageState),
+        name: inputState.username,
+        age: parseInt(inputState.age),
       };
       props.onDataSubmit(userObj);
-      setUsernameState("");
-      setAgeState("");
+      //dispatchInput({ type: "USERNAME_INPUT", val: "" });
+      //dispatchInput({ type: "AGE_INPUT", val: "" });
     }
   };
 
@@ -46,7 +61,6 @@ export default function Add(props) {
             className="block py-1 my-2 rounded"
             id="usernameInput"
             type="text"
-            value={usernameState}
             ref={nameInputRef}
           />
         </div>
@@ -57,9 +71,7 @@ export default function Add(props) {
             className="block py-1 my-2 rounded"
             id="ageInput"
             type="number"
-            value={ageState}
             ref={ageInputRef}
-
           />
         </div>
         <button className="block border-2 p-2">Add new User</button>
