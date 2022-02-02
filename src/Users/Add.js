@@ -1,6 +1,6 @@
 import { useReducer, useRef, useState } from "react";
 
-const initialState = { username: "", age: 0 };
+const initialState = { username: "", age: "" };
 
 const inputReducer = (state, action) => {
   switch (action.type) {
@@ -8,6 +8,8 @@ const inputReducer = (state, action) => {
       return {username: action.payload.username, age:state.age};
     case "AGECHANGE":
       return { username:state.username,age:action.payload.age};
+    case "RESET":
+      return {username:"",age:""};
 
     default:
       throw new Error();
@@ -50,6 +52,7 @@ export default function Add(props) {
         age: parseInt(state.age),
       };
       props.onDataSubmit(userObj);
+      dispatchInput({type:"RESET"});
     }
   };
 
@@ -63,6 +66,7 @@ export default function Add(props) {
             className="block py-1 my-2 rounded"
             id="usernameInput"
             type="text"
+            value={state.username}
             ref={nameInputRef}
           />
         </div>
@@ -73,6 +77,7 @@ export default function Add(props) {
             className="block py-1 my-2 rounded"
             id="ageInput"
             type="number"
+            value={state.age}
             ref={ageInputRef}
           />
         </div>
