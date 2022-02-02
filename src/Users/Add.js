@@ -1,12 +1,17 @@
 import { useReducer, useRef, useState } from "react";
 
+const initialState = { username: "", age: 0 };
+
 const inputReducer = (state, action) => {
-  if (action.type === "USERNAME_INPUT") {
-    return { username: action.usrV, age:state.ageV  };
-  } else if (action.type === "AGE_INPUT") {
-    return { username: state.usrV, age: action.ageV };
+  switch (action.type) {
+    case "USRCHANGE":
+      return {username: action.payload.username, age:state.age};
+    case "AGECHANGE":
+      return { username:state.username,age:action.payload.age};
+
+    default:
+      throw new Error();
   }
-  return { username: '', age: 0 };
 };
 
 export default function Add(props) {
@@ -15,39 +20,36 @@ export default function Add(props) {
   const nameInputRef = useRef();
   const ageInputRef = useRef();
 
-  // const [usernameState, setUsernameState] = useState("");
-  // const [ageState, setAgeState] = useState("");
 
-  const [inputState, dispatchInput] = useReducer(inputReducer, {
-    username: 'HelloThere',
-    age: 0,
-  });
-  console.log(ageInputRef.current.value);
+  const [state, dispatchInput] = useReducer(inputReducer, initialState);
 
   const usernameChangeHandler = () => {
-    dispatchInput({ type: "USERNAME_INPUT", usrV: nameInputRef.current.value });
+    dispatchInput({
+      type: "USRCHANGE",
+      payload: { username: nameInputRef.current.value, age: state.age },
+    });
   };
   const ageChangeHandler = () => {
-    dispatchInput({ type: "AGE_INPUT", ageV: ageInputRef.current.value });
+    dispatchInput({
+      type: "AGECHANGE",
+      payload: { username: state.username, age: ageInputRef.current.value },
+    });
   };
-
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (inputState.age <= 0) {
+    if (state.age <= 0) {
       onInvalidState(1);
       return;
-    } else if (inputState.username.trim().length < 3) {
+    } else if (state.username.trim().length < 3) {
       onInvalidState(2);
     } else {
       const userObj = {
         id: Math.random() * 10,
-        name: inputState.username,
-        age: parseInt(inputState.age),
+        name: state.username,
+        age: parseInt(state.age),
       };
       props.onDataSubmit(userObj);
-      //dispatchInput({ type: "USERNAME_INPUT", val: "" });
-      //dispatchInput({ type: "AGE_INPUT", val: "" });
     }
   };
 
